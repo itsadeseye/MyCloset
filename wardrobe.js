@@ -146,3 +146,18 @@
   renderItems();
 
 })();
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      console.log("File read successfully");
+      resolve(reader.result);
+    };
+    reader.onerror = (e) => {
+      console.error("File read error", e);
+      reject(e);
+    };
+    reader.readAsDataURL(file);
+  });
+}
