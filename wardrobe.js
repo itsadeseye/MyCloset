@@ -63,7 +63,11 @@
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
+      reader.onerror = (e) => resolve(reader.result);
+      reader.onerror = (e) => {
+        console.error("FileReader error:", e);
+        reject(e);
+      };
       reader.readAsDataURL(file);
     });
   }
@@ -105,25 +109,43 @@
   }
 
   // Handle add item
+  // uploadForm.addEventListener('submit', async e => {
+  //   e.preventDefault();
+
+  //   const name = document.getElementById('itemName').value.trim();
+  //   const category = document.getElementById('itemCategory').value;
+  //   const color = document.getElementById('itemColor').value;
+  //   const moodRaw = document.getElementById('itemMood').value.trim();
+  //   const mood = moodRaw ? moodRaw.split(',').map(m => m.trim()).filter(Boolean) : [];
+  //   const favorite = document.getElementById('favoriteFlag').checked;
+  //   const isNew = document.getElementById('newFlag').checked;
+  //   const lastWorn = document.getElementById('lastWornFlag').checked;
+  //   const imageFile = document.getElementById('itemImage').files[0];
+
+  //   if (!imageFile) {
+  //     alert('Please select an image file.');
+  //     return;
+  //   }
+
+  //   const imageBase64 = await fileToBase64(imageFile);
+
   uploadForm.addEventListener('submit', async e => {
-    e.preventDefault();
-
-    const name = document.getElementById('itemName').value.trim();
-    const category = document.getElementById('itemCategory').value;
-    const color = document.getElementById('itemColor').value;
-    const moodRaw = document.getElementById('itemMood').value.trim();
-    const mood = moodRaw ? moodRaw.split(',').map(m => m.trim()).filter(Boolean) : [];
-    const favorite = document.getElementById('favoriteFlag').checked;
-    const isNew = document.getElementById('newFlag').checked;
-    const lastWorn = document.getElementById('lastWornFlag').checked;
+  e.preventDefault();
+  try {
     const imageFile = document.getElementById('itemImage').files[0];
-
     if (!imageFile) {
       alert('Please select an image file.');
       return;
     }
 
     const imageBase64 = await fileToBase64(imageFile);
+    // continue to create item and save...
+
+  } catch (error) {
+    alert('Error loading image. Please try a different file.');
+    console.error(error);
+  }
+});
 
     const newItem = {
       id: Date.now().toString(),
@@ -156,11 +178,15 @@
   // Initial render
   renderItems();
 
-})();
-
 document.getElementById('preferredColors').addEventListener('click', (e) => {
   if (e.target.tagName === 'BUTTON') {
     const color = e.target.getAttribute('data-color');
     document.getElementById('itemColor').value = color;
   }
 });
+
+const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+if (imageFile.size > MAX_SIZE) {
+  alert('Image is too large. Please upload a smaller image (max 5MB).');
+  return;
+}
