@@ -68,7 +68,7 @@
     });
   }
 
-  // Render items grid
+  // Render items grid with delete button
   function renderItems() {
     itemsGrid.innerHTML = '';
 
@@ -92,6 +92,7 @@
           ${item.new ? '<span class="flag new" title="New">New</span>' : ''}
           ${item.lastWorn ? '<span class="flag lastWorn" title="Last Worn">👗</span>' : ''}
         </div>
+        <button class="delete-btn" data-id="${item.id}" aria-label="Delete ${item.name}">Delete</button>
       `;
 
       itemsGrid.appendChild(div);
@@ -142,22 +143,24 @@
     uploadForm.reset();
   });
 
+  // Handle delete button clicks using event delegation
+  itemsGrid.addEventListener('click', (e) => {
+    if (e.target.classList.contains('delete-btn')) {
+      const idToDelete = e.target.dataset.id;
+      wardrobeItems = wardrobeItems.filter(item => item.id !== idToDelete);
+      saveItems();
+      renderItems();
+    }
+  });
+
   // Initial render
   renderItems();
 
 })();
 
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      console.log("File read successfully");
-      resolve(reader.result);
-    };
-    reader.onerror = (e) => {
-      console.error("File read error", e);
-      reject(e);
-    };
-    reader.readAsDataURL(file);
-  });
-}
+document.getElementById('preferredColors').addEventListener('click', (e) => {
+  if (e.target.tagName === 'BUTTON') {
+    const color = e.target.getAttribute('data-color');
+    document.getElementById('itemColor').value = color;
+  }
+});

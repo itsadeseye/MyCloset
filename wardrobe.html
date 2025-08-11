@@ -38,10 +38,20 @@
           <option value="Jackets">Jackets</option>
         </select>
       </label>
-      <label>
+      <!-- <label>
         Color:
         <input type="color" id="itemColor" value="#ff0000" required />
-      </label>
+      </label> -->
+      <label>
+  Color:
+  <input type="color" id="itemColor" value="#ff0000" required />
+</label>
+<div id="preferredColors" style="margin-top: 0.5rem;">
+  <button type="button" style="background:#f4c2c2; width: 30px; height: 30px; border-radius: 50%; border:none; margin-right:5px;" data-color="#f4c2c2"></button>
+  <button type="button" style="background:#b5ead7; width: 30px; height: 30px; border-radius: 50%; border:none; margin-right:5px;" data-color="#b5ead7"></button>
+  <button type="button" style="background:#ffdac1; width: 30px; height: 30px; border-radius: 50%; border:none; margin-right:5px;" data-color="#ffdac1"></button>
+  <!-- add more colors -->
+</div>
       <label>
         Mood (comma-separated):
         <input type="text" id="itemMood" placeholder="e.g. casual, comfy" />

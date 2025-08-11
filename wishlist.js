@@ -1,6 +1,6 @@
 (() => {
   const STORAGE_KEY_WISHLIST = 'wardrobeWishlist';
-  const STORAGE_KEY_WARDROBE = 'myWardrobeItems'; // assuming same key for wardrobe items
+  const STORAGE_KEY_WARDROBE = 'myWardrobeItems';
 
   const wishlistForm = document.getElementById('wishlistForm');
   const wishName = document.getElementById('wishName');
@@ -62,12 +62,10 @@
     wishlistForm.reset();
   });
 
-  // Analyze wardrobe and wishlist to suggest missing categories/colors
   function renderSuggestions() {
-    // Categories we expect to have at least one item each
+    // Expected wardrobe categories
     const requiredCategories = ['Tops', 'Bottoms', 'Dresses', 'Accessories', 'Shoes', 'Innerwear', 'Jackets'];
 
-    // Get unique categories in wardrobe
     const categoriesInWardrobe = [...new Set(wardrobeItems.map(i => i.category))];
 
     // Find missing categories
@@ -79,12 +77,11 @@
       colorCount[item.color] = (colorCount[item.color] || 0) + 1;
     });
 
-    // Identify colors with less than 2 items (example threshold)
+    // Colors with less than 2 items
     const colorGaps = Object.entries(colorCount)
       .filter(([color, count]) => count < 2)
       .map(([color]) => color);
 
-    // Compose suggestion messages
     let suggestionsHTML = '';
 
     if (missingCategories.length === 0 && colorGaps.length === 0 && wishlist.length === 0) {
@@ -94,10 +91,11 @@
         suggestionsHTML += <p><strong>Missing categories:</strong> ${missingCategories.join(', ')}</p>;
       }
       if (colorGaps.length) {
-        suggestionsHTML += `<p><strong>Colors with few items:</strong> ${colorGaps.map(c => <span style="display:inline-block;width:20px;height:20px;background-color:${c};border-radius:50%;border:1px solid #ccc;margin-right:6px;"></span>).join('')}</p>`;
+        const colorCircles = colorGaps.map(c => <span style="display:inline-block;width:20px;height:20px;background-color:${c};border-radius:50%;border:1px solid #ccc;margin-right:6px;"></span>).join('');
+        suggestionsHTML += <p><strong>Colors with few items:</strong> ${colorCircles}</p>;
       }
       if (wishlist.length) {
-        suggestionsHTML +=`<p><strong>Your Wishlist Items:</strong></p><ul>`;
+        suggestionsHTML += `<p><strong>Your Wishlist Items:</strong></p><ul>`;
         wishlist.forEach(item => {
           suggestionsHTML += <li>${item.name} (${item.category}) <span style="display:inline-block;width:20px;height:20px;background-color:${item.color};border-radius:50%;border:1px solid #ccc;margin-left:8px;"></span></li>;
         });
