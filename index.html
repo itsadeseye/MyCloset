@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Closet</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header>
+  <h1>My Color Themed Wardrobe</h1>
+  <nav>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="wardrobe.html">Closet</a></li>
+      <li><a href="planner.html">Planner</a></li>
+      <li><a href="wishlist.html"> Whishlist</a></li>
+      <li><a href="portfolio.html">Portfolio</a></li>
+    </ul>
+  </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <section id="intro">
+      <h2>Color Themed</h2>
+      <p>Plan your outfits for the week based on color themes and keep track of every look.</p>
+    </section>
+
+    <section id="color-week">
+      <h2>This Week's Theme</h2>
+      <div class="color-display">
+        <div class="color-sample" id ="colorSample" style="background-color: pink;"></div>
+        <p id="themeName">Pink Week</p>
+      </div>
+    </section>
+
+    <section id="quick-actions">
+      <h2>Quick Actions</h2>
+      <button onclick="location.href='wardrobe.html'">Add New Clothing items</button>
+      <button onclick="location.href='planner.html'">Plan this week's outfits</button>
+    </section>
+  </main>
+
+  <!-- footer -->
+  <footer>
+    <p>&copy. 2025 My Wardrobe Planner</p>
+  </footer>
+
+
+  <script src="script.js"></script>
+
+
+</body>
+</html>

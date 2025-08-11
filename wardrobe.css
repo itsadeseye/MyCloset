@@ -1,0 +1,160 @@
+:root {
+    --primary-color: #a64d79;
+    --primary-light: #ffeaf3;
+    --border-color: #f8bcd4;
+    --text-color: #a64d79;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--primary-light);
+    color: var(--text-color);
+    max-width: 900px;
+    margin: auto;
+    padding: 1rem;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  header h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  form, section {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 0 7px rgba(0,0,0,0.1);
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  input[type="text"], input[type="color"], select, input[type="file"] {
+    width: 100%;
+    padding: 0.4rem;
+    font-size: 1rem;
+    margin-top: 0.2rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-color);
+  }
+
+  button {
+    background-color: var(--primary-color);
+    border: 1px solid var(--border-color);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 1rem;
+  }
+  button:hover {
+    background-color: var(--border-color);
+    color: var(--primary-color);
+  }
+
+  #itemsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(160px,1fr));
+    gap: 1rem;
+  }
+  .item-card {
+    background: var(--primary-light);
+    border-radius: 10px;
+    padding: 0.7rem;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid var(--border-color);
+  }
+  .item-card img {
+    max-width: 100%;
+    max-height: 140px;
+    object-fit: contain;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    background: white;
+    border: 1px solid var(--border-color);
+  }
+  .item-name {
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    text-align: center;
+    color: var(--primary-color);
+  }
+  .item-category, .item-mood {
+    font-size: 0.85rem;
+    color: var(--text-color);
+    margin-bottom: 0.4rem;
+    text-align: center;
+  }
+  .item-color {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    margin-bottom: 0.4rem;
+  }
+  .flags-container {
+    display: flex;
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .flag {
+    font-size: 0.8rem;
+    background: var(--primary-color);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 12px;
+    user-select: none;
+  }
+  .flag.favorite {
+    background: #e60073;
+  }
+  .flag.new {
+    background: #2196F3;
+  }
+  .flag.lastWorn {
+    background: #4caf50;
+  }
+  .card-buttons {
+    display: flex;
+    gap: 0.6rem;
+    width: 100%;
+  }
+  .card-buttons button {
+    flex: 1;
+    padding: 0.3rem 0;
+    font-size: 0.85rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    color: white;
+  }
+  .card-buttons button.edit {
+    background-color: var(--primary-color);
+  }
+  .card-buttons button.delete {
+    background-color: #e60073;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    #itemsGrid {
+      grid-template-columns: repeat(auto-fill,minmax(140px,1fr));
+    }
+  }

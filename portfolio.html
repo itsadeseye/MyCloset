@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Outfit Board</title>
+<link rel="stylesheet" href="portfolio.css">
+</head>
+<body>
+
+<header>
+  <h1>Outfit Board</h1>
+  <nav style="background:#a64d79; padding:1rem; text-align:center;">
+  <a href="index.html" style="color:white; margin:0 1rem; font-weight:bold; text-decoration:none;">Home</a>
+  <a href="wardrobe.html" style="color:white; margin:0 1rem; font-weight:bold; text-decoration:none;">Closet</a>
+  <a href="planner.html" style="color:white; margin:0 1rem; font-weight:bold; text-decoration:none;">Planner</a>
+  <a href="wishlist.html" style="color: white; margin:0 1rem; font-weight: bold; text-decoration: none;">Wishlist</a>
+  <a href="portfolio.html" style="color: white; margin:0 1rem; font-weight: bold; text-decoration: none;">Portfolio</a>
+</nav>
+</header>
+
+<main>
+  <form id="uploadForm">
+    <label for="photoInput">Upload Outfit Photo(s):</label>
+    <input type="file" id="photoInput" accept="image/*" multiple required />
+
+    <label for="notesInput">Notes / Tags (e.g. date worn, occasion, mood):</label>
+    <textarea id="notesInput" rows="3" placeholder="Add notes or tags..."></textarea>
+
+    <button type="submit">Add to Board</button>
+  </form>
+
+  <section id="gallery" aria-live="polite" aria-label="Outfit photos gallery">
+    <!-- Photos will show here -->
+  </section>
+</main>
+
+<!-- Edit modal -->
+<div id="editModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
+  <div class="modal-content">
+    <span class="closeBtn" id="editCloseBtn" role="button" aria-label="Close edit modal">&times;</span>
+    <h3 id="editModalTitle">Edit Notes</h3>
+    <form id="editForm">
+      <input type="hidden" id="editPhotoId" />
+      <label for="editNotesInput">Notes / Tags:</label>
+      <textarea id="editNotesInput" rows="4"></textarea>
+      <button type="submit">Save Changes</button>
+    </form>
+  </div>
+</div>
+
+<script src="portfolio.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wishlist & Shopping Suggestions</title>
+<link rel="stylesheet" href="wishlist.css">
+</head>
+<body>
+
+<h1>Wishlist & Shopping Suggestions</h1>
+<nav style="background:#a64d79; padding:1rem; text-align:center;">
+  <a href="index.html" style="color:white; margin:0 1rem; font-weight:bold; text-decoration:none;">Home</a>
+  <a href="wardrobe.html" style="color:white; margin:0 1rem; font-weight:bold; text-decoration:none;">Closet</a>
+  <a href="planner.html" style="color:white; margin:0 1rem; font-weight:bold; text-decoration:none;">Planner</a>
+  <a href="wishhlist.html"style="color: white; margin:0 1rem; font-weight: bold; text-decoration: none;">Wishlist</a>
+  <a href="portfolio.html" style="color: white; margin:0 1rem; font-weight: bold; text-decoration: none;">Portfolio</a>
+</nav>
+
+<section id="wishlistSection">
+  <h2>Add to Wishlist</h2>
+  <form id="wishlistForm">
+    <label>
+      Item Name:
+      <input type="text" id="wishName" required />
+    </label>
+    <label>
+      Category:
+      <select id="wishCategory" required>
+        <option value="">Select category</option>
+        <option>Tops</option>
+        <option>Bottoms</option>
+        <option>Dresses</option>
+        <option>Accessories</option>
+        <option>Shoes</option>
+        <option>Innerwear</option>
+        <option>Jackets</option>
+      </select>
+    </label>
+    <label>
+      Preferred Color:
+      <input type="color" id="wishColor" value="#ff0000" />
+    </label>
+    <label>
+      Notes:
+      <textarea id="wishNotes" rows="2" placeholder="Additional details..."></textarea>
+    </label>
+    <button type="submit">Add to Wishlist</button>
+  </form>
+
+  <h2>Your Wishlist</h2>
+  <ul id="wishlistItems"></ul>
+</section>
+
+<section id="suggestions">
+  <h2>Shopping Suggestions</h2>
+  <div id="suggestionsList">Loading suggestions...</div>
+</section>
+
+<script src="wishlist.js"></script>
+
+</body>
+</html>

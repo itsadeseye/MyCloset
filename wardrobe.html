@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wardrobe - Color Themed</title>
+<link rel="stylesheet" href="wardrobe.css">
+</head>
+<body>
+
+<header>
+  <h1>My Wardrobe</h1>
+</header>
+<nav style="background:#a64d79; padding:1rem; text-align:center;">
+  <a href="index.html" style="color:white; margin:0 1rem; font-weight:bold; text-decoration:none;">Home</a>
+  <a href="wardrobe.html" style="color:white; margin:0 1rem; font-weight:bold; text-decoration:none;">Closet</a>
+  <a href="planner.html" style="color:white; margin:0 1rem; font-weight:bold; text-decoration:none;">Planner</a>
+  <a href="wishlist.html" style="color: white; margin:0 1rem; font-weight: bold; text-decoration: none;">Wishlist</a>
+  <a href="portfolio.html" style="color: white; margin:0 1rem; font-weight: bold; text-decoration: none;">Portfolio</a>
+</nav>
+<main>
+  <section>
+    <form id="uploadForm" autocomplete="off">
+      <label>
+        Name:
+        <input type="text" id="itemName" required />
+      </label>
+      <label>
+        Category:
+        <select id="itemCategory" required>
+          <option value="">Select category</option>
+          <option value="Tops">Tops</option>
+          <option value="Bottoms">Bottoms</option>
+          <option value="Dresses">Dresses</option>
+          <option value="Accessories">Accessories</option>
+          <option value="Shoes">Shoes</option>
+          <option value="Innerwear">Innerwear</option>
+          <option value="Jackets">Jackets</option>
+        </select>
+      </label>
+      <label>
+        Color:
+        <input type="color" id="itemColor" value="#ff0000" required />
+      </label>
+      <label>
+        Mood (comma-separated):
+        <input type="text" id="itemMood" placeholder="e.g. casual, comfy" />
+      </label>
+      <label>
+        Image:
+        <input type="file" id="itemImage" accept="image/*" required />
+      </label>
+      <div>
+        <label><input type="checkbox" id="favoriteFlag"/>Favorite</label>
+        <label><input type="checkbox" id="newFlag" /> New</label>
+        <label><input type="checkbox" id="lastWornFlag" /> Last Worn</label>
+      </div>
+      <button type="submit">Add Item</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>Your Clothes</h2>
+    <div id="itemsGrid" aria-live="polite"></div>
+  </section>
+</main>
+
+<script src="wardrobe.js"></script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Outfit Planner</title>
+<link rel="stylesheet" href="planner.css">
+</head>
+<body>
+
+<h1>Outfit Planner</h1>
+<nav style="background:#a64d79; padding:1rem; text-align:center;">
+  <a href="index.html" style="color:white; margin:0 1rem; font-weight:bold; text-decoration:none;">Home</a>
+  <a href="wardrobe.html" style="color:white; margin:0 1rem; font-weight:bold; text-decoration:none;">Closet</a>
+  <a href="planner.html" style="color:white; margin:0 1rem; font-weight:bold; text-decoration:none;">Planner</a>
+  <a href="wishlist.html" style="color: white; margin:0 1rem; font-weight: bold; text-decoration: none;">Wishlist</a>
+  <a href="portfolio.html" style="color: white; margin:0 1rem; font-weight: bold; text-decoration: none;">Portfolio</a>
+</nav>
+  
+
+<section>
+  <form id="planForm" autocomplete="off">
+    <label for="day">Day of the Week</label>
+    <select id="day" required>
+      <option value="">-- Select day --</option>
+      <option>Monday</option>
+      <option>Tuesday</option>
+      <option>Wednesday</option>
+      <option>Thursday</option>
+      <option>Friday</option>
+      <option>Saturday</option>
+      <option>Sunday</option>
+    </select>
+
+    <label for="collectionSelect">Collection</label>
+    <select id="collectionSelect">
+      <option value="">-- None --</option>
+    </select>
+
+    <label for="outfitColors">Outfit Colors (comma-separated hex or named colors)</label>
+    <input type="text" id="outfitColors" placeholder="e.g. pink, #a64d79, white" required />
+
+    <label for="notes">Notes / Occasion / Comfort</label>
+    <textarea id="notes" placeholder="Add notes about this outfit"></textarea>
+
+    <label for="rating">Rate this outfit</label>
+    <select id="rating">
+      <option value="">-- No rating --</option>
+      <option value="1">1 - Poor</option>
+      <option value="2">2 - Okay</option>
+      <option value="3">3 - Good</option>
+      <option value="4">4 - Great</option>
+      <option value="5">5 - Perfect</option>
+    </select>
+
+    <button type="submit">Save Planned Outfit</button>
+  </form>
+</section>
+
+  <section id="suggestionsSection" aria-label="Suggested Outfits">
+  <h2>Suggested Outfits for Selected Day</h2>
+  <div id="suggestionsGrid" style="display:flex; flex-wrap: wrap; gap: 1rem;"></div>
+</section>
+
+<section class="collection-manager">
+  <h2>Manage Collections</h2>
+  <input type="text" id="newCollectionName" placeholder="New collection name" />
+  <button id="addCollectionBtn">Add Collection</button>
+  <ul id="collectionList"></ul>
+</section>
+
+<section>
+  <h2>Filter Planned Outfits</h2>
+  <label for="filterDay">Day:</label>
+  <select id="filterDay">
+    <option value="">All Days</option>
+    <option>Monday</option>
+    <option>Tuesday</option>
+    <option>Wednesday</option>
+    <option>Thursday</option>
+    <option>Friday</option>
+    <option>Saturday</option>
+    <option>Sunday</option>
+  </select>
+
+  <label for="filterCollection">Collection:</label>
+  <select id="filterCollection">
+    <option value="">All Collections</option>
+  </select>
+
+  <ul id="plannedList" aria-live="polite"></ul>
+</section>
+
+<section id="packingListSection" aria-label="Packing List Generator">
+  <h2>Packing List</h2>
+  <label for="outfitSelect">Select Outfits to Pack:</label>
+  <select id="outfitSelect" multiple size="5" style="width: 100%; max-width: 400px;"></select>
+  <button id="generatePackingListBtn" type="button">Generate Packing List</button>
+  <button id="printPackingListBtn" type="button" style="display:none;">Print Packing List</button>
+  <pre id="packingListDisplay" style="background:#f0f0f0; padding:1rem; border-radius:8px; margin-top:1rem;"></pre>
+</section>
+
+<section id="analyticsSection" aria-label="Analytics Dashboard">
+  <h2>Analytics Dashboard</h2>
+  
+  <div id="topWornItems">
+    <h3>Top 3 Most Worn Items</h3>
+    <ul></ul>
+  </div>
+  
+  <div id="colorUsage">
+    <h3>Color Usage</h3>
+    <ul></ul>
+  </div>
+  
+  <div id="oldItems">
+    <h3>Old Items (not worn 4+ weeks)</h3>
+    <ul></ul>
+  </div>
+</section>
+
+<!-- Add Export buttons in your planner or wardrobe page -->
+<section id="exportSection">
+  <h2>Export Options</h2>
+  <button id="exportOutfitsBtn">Export Planned Outfits as PDF</button>
+  <button id="exportPackingListBtn">Export Packing List as PDF</button>
+</section>
+
+
+
+
+
+<script src="planner.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+
+</body>
+</html>
