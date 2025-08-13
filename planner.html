@@ -1,138 +1,265 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Outfit Planner</title>
-<link rel="stylesheet" href="planner.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Planner</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <style>
+    :root{
+      --bg:#fff7f9;
+      --paper:#ffffff;
+      --ink:#4b2c36;
+      --muted:#8f5a7e;
+      --accent:#a64d79;
+      --chip:#f8c8dc;
+      --ring:#f0c6d3;
+      --shadow:0 8px 24px rgba(0,0,0,.06);
+      --nav-height:64px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--ink);
+      -webkit-font-smoothing:antialiased;
+      display:flex;
+      flex-direction:column;
+    }
+
+    /* Page wrapper (gives room above the fixed bottom nav) */
+    .wrap{
+      width:min(1100px,100%);
+      margin:0 auto;
+      padding:18px 14px  calc(var(--nav-height) + 18px);
+      max-width:1100px;
+      flex:1 0 auto;
+    }
+
+    /* Header */
+    .banner{
+      display:flex; align-items:center; gap:12px; margin-bottom:12px;
+    }
+    .dot{
+      width:36px; height:36px; border-radius:50%;
+      background:var(--accent); box-shadow:0 0 0 6px var(--chip);
+      flex:0 0 36px;
+    }
+    .banner h1{margin:0;font-size:1.25rem}
+    .banner p{margin:2px 0 0;color:var(--muted);font-size:.92rem}
+
+    /* Card */
+    .card{
+      background:var(--paper);
+      border:1px solid var(--ring);
+      border-radius:14px;
+      padding:12px;
+      box-shadow:var(--shadow);
+      margin-bottom:12px;
+    }
+    .card h2{margin:0 0 8px;font-size:1.05rem}
+    .note{color:var(--muted); font-size:.9rem; margin-bottom:8px}
+
+    /* Calendar header */
+    .cal-header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+    .cal-title{font-weight:700}
+    .cal-nav{
+      border:1px solid var(--ring); background:var(--paper); color:var(--ink);
+      border-radius:10px; padding:8px 10px; cursor:pointer;
+    }
+
+    /* Weekday labels */
+    .weekday{display:grid;grid-template-columns:repeat(7,1fr); gap:8px; margin-bottom:8px; color:var(--muted); font-size:.85rem}
+
+    /* Calendar grid */
+    .grid{display:grid;grid-template-columns:repeat(7,1fr); gap:8px}
+    .day{
+      border:1px solid var(--ring);
+      background:#fff;
+      border-radius:10px;
+      min-height:84px;
+      padding:8px;
+      position:relative;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      cursor:pointer;
+      overflow:hidden;
+    }
+    .day.out{opacity:.4}
+    .day .n{font-weight:700; font-size:.95rem}
+    .day.today{outline:2px solid var(--accent)}
+    .dot-plan{width:8px;height:8px;border-radius:50%;background:var(--accent); position:absolute; right:8px; top:8px}
+
+    /* Selected day detail */
+    .details{
+      display:grid;
+      gap:8px;
+    }
+    .status{color:var(--muted); font-size:.95rem}
+
+    .btn{
+      display:inline-block; padding:8px 12px; border-radius:10px; border:1px solid var(--ring);
+      background:var(--paper); color:var(--ink); cursor:pointer; font-weight:700;
+    }
+    .btn.primary{background:var(--accent); color:#fff; border-color:transparent}
+
+    /* Analytics grid */
+    .mini-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px; margin-top:8px}
+    .mini{background:#fff; border:1px solid var(--ring); border-radius:10px; overflow:hidden}
+    .mini img{width:100%; height:100px; object-fit:cover; display:block}
+    .meta{padding:8px; color:var(--muted); font-size:.9rem}
+
+    /* Bottom nav (matches closet page) */
+    .bottom-nav{
+      position:fixed; left:0; right:0; bottom:0; height:var(--nav-height); z-index:60;
+      display:flex; justify-content:space-around; align-items:center;
+      background:color-mix(in lab, var(--chip) 70%, white);
+      backdrop-filter: blur(6px); border-top:1px solid var(--ring);
+    }
+    .nav-item{display:flex; flex-direction:column; align-items:center; gap:4px; text-decoration:none; color:var(--muted); font-size:11px; width:72px}
+    .nav-item .material-icons{font-size:20px}
+    .nav-item.active, .nav-item:focus, .nav-item:hover{color:var(--accent)}
+
+    .modal {
+  position: fixed;
+  top:0; left:0; right:0; bottom:0;
+  background: rgba(0,0,0,0.4);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:100;
+}
+.modal-content {
+  background:#fff;
+  padding:20px;
+  border-radius:14px;
+  max-width:500px;
+  width:90%;
+  max-height:80%;
+  overflow-y:auto;
+}
+.closet-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(100px,1fr)); gap:10px; }
+.closet-item img { width:100%; border-radius:10px; cursor:pointer; }
+
+    /* small screen tweaks */
+    @media (max-width:480px){
+      .day{min-height:72px; padding:6px}
+      .banner h1{font-size:1.05rem}
+      .nav-item{width:56px}
+    }
+  </style>
 </head>
 <body>
+  <div class="wrap" id="themeRoot">
+    <header class="banner card" aria-hidden="false">
+      <span class="dot" aria-hidden="true"></span>
+      <div>
+        <h1>Planner</h1>
+        <p id="themeLabel">This week's theme</p>
+      </div>
+    </header>
 
-<h1>Outfit Planner</h1>
-<nav style="background:#a64d79; padding:1rem; text-align:center;">
-  <a href="index.html" style="color:white; margin:0 1rem; font-weight:bold; text-decoration:none;">Home</a>
-  <a href="wardrobe.html" style="color:white; margin:0 1rem; font-weight:bold; text-decoration:none;">Closet</a>
-  <a href="planner.html" style="color:white; margin:0 1rem; font-weight:bold; text-decoration:none;">Planner</a>
-  <a href="wishlist.html" style="color: white; margin:0 1rem; font-weight: bold; text-decoration: none;">Wishlist</a>
-  <a href="portfolio.html" style="color: white; margin:0 1rem; font-weight: bold; text-decoration: none;">Portfolio</a>
-</nav>
-  
+    <!-- Calendar card -->
+    <section class="card" aria-labelledby="calendarTitle">
+      <h2 id="calendarTitle">Outfit Calendar</h2>
+      <p class="note">Tap a date to plan or view its saved outfit.</p>
 
-<section>
-  <form id="planForm" autocomplete="off">
-    <label for="day">Day of the Week</label>
-    <select id="day" required>
-      <option value="">-- Select day --</option>
-      <option>Monday</option>
-      <option>Tuesday</option>
-      <option>Wednesday</option>
-      <option>Thursday</option>
-      <option>Friday</option>
-      <option>Saturday</option>
-      <option>Sunday</option>
-    </select>
+      <div class="cal-header">
+        <button class="cal-nav" id="prevMonthBtn"><span class="material-icons">chevron_left</span></button>
+        <div class="cal-title" id="monthLabel">Month YYYY</div>
+        <button class="cal-nav" id="nextMonthBtn"><span class="material-icons">chevron_right</span></button>
+      </div>
 
-    <label for="collectionSelect">Collection</label>
-    <select id="collectionSelect">
-      <option value="">-- None --</option>
-    </select>
+      <div class="weekday" aria-hidden="true">
+        <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+      </div>
 
-    <label for="outfitColors">Outfit Colors (comma-separated hex or named colors)</label>
-    <input type="text" id="outfitColors" placeholder="e.g. pink, #a64d79, white" required />
+      <div class="grid" id="calendarGrid" role="grid" aria-label="Calendar days">
+        <!-- Days will be populated by JS. This is the structural layout. -->
+        <!-- Example static placeholders (remove when wiring JS): -->
+        <div class="day out"></div><div class="day out"></div>
+        <div class="day"><div class="n">1</div></div>
+        <div class="day"><div class="n">2</div></div>
+        <div class="day"><div class="n">3</div><div class="dot-plan" title="Planned"></div></div>
+        <div class="day"><div class="n">4</div></div>
+        <div class="day"><div class="n">5</div></div>
+        <!-- more days... -->
+      </div>
+    </section>
 
-    <label for="notes">Notes / Occasion / Comfort</label>
-    <textarea id="notes" placeholder="Add notes about this outfit"></textarea>
-
-    <label for="rating">Rate this outfit</label>
-    <select id="rating">
-      <option value="">-- No rating --</option>
-      <option value="1">1 - Poor</option>
-      <option value="2">2 - Okay</option>
-      <option value="3">3 - Good</option>
-      <option value="4">4 - Great</option>
-      <option value="5">5 - Perfect</option>
-    </select>
-
-    <button type="submit">Save Planned Outfit</button>
-  </form>
-</section>
-
-  <section id="suggestionsSection" aria-label="Suggested Outfits">
-  <h2>Suggested Outfits for Selected Day</h2>
-  <div id="suggestionsGrid" style="display:flex; flex-wrap: wrap; gap: 1rem;"></div>
-</section>
-
-<section class="collection-manager">
-  <h2>Manage Collections</h2>
-  <input type="text" id="newCollectionName" placeholder="New collection name" />
-  <button id="addCollectionBtn">Add Collection</button>
-  <ul id="collectionList"></ul>
-</section>
-
-<section>
-  <h2>Filter Planned Outfits</h2>
-  <label for="filterDay">Day:</label>
-  <select id="filterDay">
-    <option value="">All Days</option>
-    <option>Monday</option>
-    <option>Tuesday</option>
-    <option>Wednesday</option>
-    <option>Thursday</option>
-    <option>Friday</option>
-    <option>Saturday</option>
-    <option>Sunday</option>
-  </select>
-
-  <label for="filterCollection">Collection:</label>
-  <select id="filterCollection">
-    <option value="">All Collections</option>
-  </select>
-
-  <ul id="plannedList" aria-live="polite"></ul>
-</section>
-
-<section id="packingListSection" aria-label="Packing List Generator">
-  <h2>Packing List</h2>
-  <label for="outfitSelect">Select Outfits to Pack:</label>
-  <select id="outfitSelect" multiple size="5" style="width: 100%; max-width: 400px;"></select>
-  <button id="generatePackingListBtn" type="button">Generate Packing List</button>
-  <button id="printPackingListBtn" type="button" style="display:none;">Print Packing List</button>
-  <pre id="packingListDisplay" style="background:#f0f0f0; padding:1rem; border-radius:8px; margin-top:1rem;"></pre>
-</section>
-
-<section id="analyticsSection" aria-label="Analytics Dashboard">
-  <h2>Analytics Dashboard</h2>
-  
-  <div id="topWornItems">
-    <h3>Top 3 Most Worn Items</h3>
-    <ul></ul>
+    <!-- Closet modal for planner -->
+<div id="closetModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <h2>Select Outfit</h2>
+    <div id="closetGridModal" class="closet-grid"></div>
+    <button class="btn" id="closeModalBtn">Close</button>
   </div>
-  
-  <div id="colorUsage">
-    <h3>Color Usage</h3>
-    <ul></ul>
+</div>
+
+    <!-- Selected date & planner -->
+    <section class="card" aria-labelledby="selectedTitle">
+      <h2 id="selectedTitle">Selected Date</h2>
+      <p id="selectedDateLabel" class="status">Select a date on the calendar.</p>
+
+      <div class="details" id="planArea">
+        <div id="planStatus" class="status">No planned outfit for this day.</div>
+        <div style="display:flex;gap:8px;margin-top:6px">
+          <button class="btn primary" id="planBtn">Plan Outfit</button>
+          <button class="btn" id="viewBtn">View</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Analytics -->
+    <section class="card" aria-labelledby="analyticsTitle">
+      <h2 id="analyticsTitle">Weekly Analytics</h2>
+      <p class="note">Top 3 most-used items and old items (≤5 uses) filtered by this week's theme.</p>
+
+      <h3 style="margin:8px 0 6px">Top 3 Most Worn</h3>
+      <div id="topThree" class="mini-grid">
+        <!-- JS will populate cards here. -->
+        <div class="mini"><div class="meta">No data yet</div></div>
+      </div>
+
+      <h3 style="margin:12px 0 6px">Old items (≤ 5 uses)</h3>
+      <div id="oldItems" class="mini-grid">
+        <div class="mini"><div class="meta">No data yet</div></div>
+      </div>
+    </section>
   </div>
-  
-  <div id="oldItems">
-    <h3>Old Items (not worn 4+ weeks)</h3>
-    <ul></ul>
-  </div>
-</section>
 
-<!-- Add Export buttons in your planner or wardrobe page -->
-<section id="exportSection">
-  <h2>Export Options</h2>
-  <button id="exportOutfitsBtn">Export Planned Outfits as PDF</button>
-  <button id="exportPackingListBtn">Export Packing List as PDF</button>
-</section>
+  <!-- Bottom nav (matches closet page: Home, Closet, Planner, Wishlist, Portfolio) -->
+  <nav class="bottom-nav" role="navigation" aria-label="Primary">
+    <a href="index.html" class="nav-item">
+      <span class="material-icons" aria-hidden="true">home</span>
+      <span class="label">Home</span>
+    </a>
 
+    <a href="wardrobe.html" class="nav-item">
+      <span class="material-icons" aria-hidden="true">checkroom</span>
+      <span class="label">Closet</span>
+    </a>
 
+    <a href="planner.html" class="nav-item active" aria-current="page">
+      <span class="material-icons" aria-hidden="true">event</span>
+      <span class="label">Planner</span>
+    </a>
 
+    <a href="wishlist.html" class="nav-item">
+      <span class="material-icons" aria-hidden="true">favorite</span>
+      <span class="label">Wishlist</span>
+    </a>
 
+    <a href="portfolio.html" class="nav-item">
+      <span class="material-icons" aria-hidden="true">collections_bookmark</span>
+      <span class="label">Portfolio</span>
+    </a>
+  </nav>
 
-<script src="planner.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-
+  <script src="planner.js"></script>
 </body>
 </html>

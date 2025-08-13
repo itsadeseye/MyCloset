@@ -1,80 +1,333 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Wardrobe - Color Themed</title>
-<link rel="stylesheet" href="wardrobe.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Closet</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+:root{
+  --bg:#fff7f9;
+  --paper:#ffffff;
+  --ink:#4b2c36;
+  --muted:#8f5a7e;
+  --accent:#a64d79;
+  --chip:#f8c8dc;
+  --ring:#f0c6d3;
+  --shadow:0 8px 24px rgba(0,0,0,.06);
+  --nav-height:64px;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  display:flex;
+  flex-direction:column;
+}
+
+/* Page wrapper */
+.wrap{
+  width:min(1100px,100%);
+  margin:0 auto;
+  padding:18px 14px calc(var(--nav-height) + 18px);
+  flex:1 0 auto;
+}
+
+/* Header */
+.banner{
+  display:flex; align-items:center; gap:12px; margin-bottom:12px;
+}
+.banner h1{margin:0;font-size:1.25rem}
+.banner p{margin:2px 0 0;color:var(--muted);font-size:.92rem}
+
+/* Category buttons */
+.categories{
+  display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px;
+}
+.category-btn{
+  padding:6px 12px;
+  border-radius:10px;
+  border:1px solid var(--ring);
+  background:var(--paper);
+  cursor:pointer;
+}
+.category-btn.active{
+  background:var(--accent);
+  color:#fff;
+}
+
+/* Color picker */
+.colors{
+  display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px;
+}
+.color-option{
+  width:24px; height:24px;
+  border-radius:50%;
+  border:2px solid #fff;
+  cursor:pointer;
+  box-shadow:0 0 0 1px var(--ring);
+}
+.color-option.selected{
+  box-shadow:0 0 0 2px var(--accent);
+}
+
+/* Upload area */
+.upload-section{
+  margin-bottom:12px;
+  display:flex; gap:8px; flex-wrap:wrap;
+}
+.upload-section input[type="file"]{
+  flex:1;
+}
+.upload-section button{
+  padding:6px 12px;
+  border:none; border-radius:10px;
+  background:var(--accent);
+  color:#fff;
+  cursor:pointer;
+}
+
+/* Closet grid */
+#closetGrid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+  gap:12px;
+}
+.closet-item{
+  position:relative;
+  border:1px solid var(--ring);
+  border-radius:10px;
+  overflow:hidden;
+  background:var(--paper);
+}
+.closet-item img{
+  width:100%;
+  height:200px;
+  object-fit:cover;
+  display:block;
+}
+.badge{
+  position:absolute;
+  top:4px;
+  left:4px;
+  background:var(--accent);
+  color:#fff;
+  font-size:10px;
+  padding:2px 4px;
+  border-radius:4px;
+}
+.delete-btn{
+  position:absolute;
+  top:4px;
+  right:4px;
+  background:#fff;
+  border:none;
+  font-size:14px;
+  cursor:pointer;
+}
+.meta{
+  padding:6px;
+  font-size:0.8rem;
+  color:var(--muted);
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+
+/* Bottom nav */
+.bottom-nav{
+  position:fixed; left:0; right:0; bottom:0; height:var(--nav-height);
+  display:flex; justify-content:space-around; align-items:center;
+  background:color-mix(in lab, var(--chip) 70%, white);
+  backdrop-filter: blur(6px); border-top:1px solid var(--ring);
+}
+.nav-item{display:flex; flex-direction:column; align-items:center; gap:4px; text-decoration:none; color:var(--muted); font-size:11px; width:72px}
+.nav-item .material-icons{font-size:20px}
+.nav-item.active{color:var(--accent)}
+</style>
 </head>
 <body>
+<div class="wrap">
+  <header class="banner">
+    <h1>Closet</h1>
+    <p>Organize your wardrobe</p>
+  </header>
 
-<header>
-  <h1>My Wardrobe</h1>
-</header>
-<nav style="background:#a64d79; padding:1rem; text-align:center;">
-  <a href="index.html" style="color:white; margin:0 1rem; font-weight:bold; text-decoration:none;">Home</a>
-  <a href="wardrobe.html" style="color:white; margin:0 1rem; font-weight:bold; text-decoration:none;">Closet</a>
-  <a href="planner.html" style="color:white; margin:0 1rem; font-weight:bold; text-decoration:none;">Planner</a>
-  <a href="wishlist.html" style="color: white; margin:0 1rem; font-weight: bold; text-decoration: none;">Wishlist</a>
-  <a href="portfolio.html" style="color: white; margin:0 1rem; font-weight: bold; text-decoration: none;">Portfolio</a>
-</nav>
-<main>
-  <section>
-    <form id="uploadForm" autocomplete="off">
-      <label>
-        Name:
-        <input type="text" id="itemName" required />
-      </label>
-      <label>
-        Category:
-        <select id="itemCategory" required>
-          <option value="">Select category</option>
-          <option value="Tops">Tops</option>
-          <option value="Bottoms">Bottoms</option>
-          <option value="Dresses">Dresses</option>
-          <option value="Accessories">Accessories</option>
-          <option value="Shoes">Shoes</option>
-          <option value="Innerwear">Innerwear</option>
-          <option value="Jackets">Jackets</option>
-        </select>
-      </label>
-      <!-- <label>
-        Color:
-        <input type="color" id="itemColor" value="#ff0000" required />
-      </label> -->
-      <label>
-  Color:
-  <input type="color" id="itemColor" value="#ff0000" required />
-</label>
-<div id="preferredColors" style="margin-top: 0.5rem;">
-  <button type="button" style="background:#f4c2c2; width: 30px; height: 30px; border-radius: 50%; border:none; margin-right:5px;" data-color="#f4c2c2"></button>
-  <button type="button" style="background:#b5ead7; width: 30px; height: 30px; border-radius: 50%; border:none; margin-right:5px;" data-color="#b5ead7"></button>
-  <button type="button" style="background:#ffdac1; width: 30px; height: 30px; border-radius: 50%; border:none; margin-right:5px;" data-color="#ffdac1"></button>
-  <!-- add more colors -->
+  <!-- Category selection -->
+  <div class="categories">
+    <button class="category-btn active" data-category="tops">Tops</button>
+    <button class="category-btn" data-category="skirts">Skirts</button>
+    <button class="category-btn" data-category="trousers">Trousers</button>
+    <button class="category-btn" data-category="gowns">Gowns</button>
+    <button class="category-btn" data-category="accessories">Accessories</button>
+    <button class="category-btn" data-category="bags">Bags</button>
+    <button class="category-btn" data-category="shoes">Shoes</button>
+    <button class="category-btn" data-category="innerwear">Innerwear</button>
+    <button class="category-btn" data-category="jackets">Jackets</button>
+  </div>
+
+  <!-- Color selection -->
+  <div class="colors">
+    <div class="color-option pink" data-color="pink" style="background:pink;"></div>
+    <div class="color-option blue" data-color="blue" style="background:blue;"></div>
+    <div class="color-option black" data-color="black" style="background:black;"></div>
+    <div class="color-option white" data-color="white" style="background:white;border:1px solid #ccc;"></div>
+    <div class="color-option brown" data-color="brown" style="background:brown;"></div>
+  </div>
+
+  <!-- Upload -->
+  <div class="upload-section">
+    <input type="file" id="uploadInput">
+    <button id="uploadBtn">Upload Item</button>
+  </div>
+
+  <!-- Closet grid -->
+  <div id="closetGrid">
+    <!-- JS will populate images here -->
+  </div>
 </div>
-      <label>
-        Mood (comma-separated):
-        <input type="text" id="itemMood" placeholder="e.g. casual, comfy" />
-      </label>
-      <label>
-        Image:
-        <input type="file" id="itemImage" accept="image/*" required />
-      </label>
-      <div>
-        <label><input type="checkbox" id="favoriteFlag"/>Favorite</label>
-        <label><input type="checkbox" id="newFlag" /> New</label>
-        <label><input type="checkbox" id="lastWornFlag" /> Last Worn</label>
-      </div>
-      <button type="submit">Add Item</button>
-    </form>
-  </section>
 
-  <section>
-    <h2>Your Clothes</h2>
-    <div id="itemsGrid" aria-live="polite"></div>
-  </section>
-</main>
+<!-- Bottom nav -->
+<nav class="bottom-nav">
+  <a href="index.html" class="nav-item"><span class="material-icons">home</span><span>Home</span></a>
+  <a href="wardrobe.html" class="nav-item active"><span class="material-icons">checkroom</span><span>Closet</span></a>
+  <a href="planner.html" class="nav-item"><span class="material-icons">event</span><span>Planner</span></a>
+  <a href="wishlist.html" class="nav-item"><span class="material-icons">favorite</span><span>Wishlist</span></a>
+  <a href="portfolio.html" class="nav-item"><span class="material-icons">collections_bookmark</span><span>Portfolio</span></a>
+</nav>
 
-<script src="wardrobe.js"></script>
+<script>
+let selectedCategory = 'tops';
+let selectedColors = new Set();
+
+// Elements
+const categoryButtons = document.querySelectorAll(".category-btn");
+const colorOptions = document.querySelectorAll(".color-option");
+const closetGrid = document.getElementById("closetGrid");
+const uploadBtn = document.getElementById("uploadBtn");
+const uploadInput = document.getElementById("uploadInput");
+
+// Category selection
+categoryButtons.forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    selectedCategory = btn.dataset.category;
+    categoryButtons.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderImages();
+  });
+});
+
+// Color selection
+colorOptions.forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const color = btn.dataset.color;
+    if(selectedColors.has(color)){
+      selectedColors.delete(color);
+      btn.classList.remove('selected');
+    } else{
+      selectedColors.add(color);
+      btn.classList.add('selected');
+    }
+  });
+});
+
+// LocalStorage helpers
+function loadImages(){
+  const data = localStorage.getItem("closetImages");
+  return data ? JSON.parse(data) : [];
+}
+function saveImages(images){
+  localStorage.setItem("closetImages",JSON.stringify(images));
+}
+
+// Render images
+function renderImages(){
+  const images = loadImages();
+  closetGrid.innerHTML = '';
+  const filtered = images.filter(img=>img.category===selectedCategory);
+
+  if(filtered.length===0){
+    closetGrid.innerHTML = `<p style="text-align:center;color:#6b2d5c;margin-top:2rem;">
+      No items in "${selectedCategory}" category yet.
+    </p>`;
+    return;
+  }
+
+  filtered.forEach(img=>{
+    const item = document.createElement('div');
+    item.className='closet-item';
+
+    const imageEl = document.createElement('img');
+    imageEl.src = img.src;
+    imageEl.alt = img.category;
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className='delete-btn';
+    deleteBtn.textContent='×';
+    deleteBtn.addEventListener('click',()=>{
+      if(confirm("Delete this item?")){
+        const updated = loadImages().filter(i=>i.id!==img.id);
+        saveImages(updated);
+        renderImages();
+      }
+    });
+
+    // Badge showing color
+    const badge = document.createElement('span');
+    badge.className='badge';
+    badge.textContent = img.colors.join(', ');
+
+    const meta = document.createElement('div');
+    meta.className='meta';
+    meta.innerHTML=`Category: ${img.category}`;
+
+    item.appendChild(imageEl);
+    item.appendChild(deleteBtn);
+    item.appendChild(badge);
+    item.appendChild(meta);
+
+    closetGrid.appendChild(item);
+  });
+}
+
+// Upload functionality
+uploadBtn.addEventListener('click',()=>{
+  if(!uploadInput.files.length){
+    alert("Select an image first"); return;
+  }
+  if(selectedColors.size===0){
+    alert("Select at least one color"); return;
+  }
+
+  const file = uploadInput.files[0];
+  if(!file.type.startsWith('image/')){
+    alert("Please select a valid image file"); return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = e=>{
+    const images = loadImages();
+    images.push({
+      id:Date.now(),
+      category:selectedCategory,
+      colors:Array.from(selectedColors),
+      src:e.target.result
+    });
+    saveImages(images);
+    selectedColors.clear();
+    colorOptions.forEach(btn=>btn.classList.remove('selected'));
+    uploadInput.value='';
+    renderImages();
+  };
+  reader.readAsDataURL(file);
+});
+
+// Initial render
+renderImages();
+</script>
 </body>
 </html>

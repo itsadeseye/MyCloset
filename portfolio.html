@@ -1,55 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Outfit Board</title>
-<link rel="stylesheet" href="portfolio.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+:root{
+  --bg:#fff7f9; --paper:#fff; --ink:#4b2c36; --muted:#8f5a7e; --accent:#a64d79; --ring:#f0c6d3; --shadow:0 4px 16px rgba(0,0,0,.08); --nav-height:64px;
+}
+*{box-sizing:border-box;}
+body{margin:0; font-family:system-ui,sans-serif; background:var(--bg); color:var(--ink); display:flex; flex-direction:column; min-height:100vh;}
+.wrap{padding:18px 14px calc(var(--nav-height)+18px); max-width:600px; width:100%; margin:0 auto; flex:1;}
+h1,h2,h3{margin:0 0 8px;}
+.card{background:var(--paper); border:1px solid var(--ring); border-radius:14px; padding:12px; margin-bottom:12px; box-shadow:var(--shadow);}
+input, textarea{width:100%; padding:8px; border-radius:10px; border:1px solid var(--ring); margin-bottom:6px;}
+textarea{resize:none;}
+.btn{cursor:pointer; border-radius:10px; border:1px solid var(--ring); padding:6px 12px; font-weight:700; background:var(--paper);}
+.btn.primary{background:var(--accent); color:#fff; border-color:transparent;}
+.portfolio-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:12px;}
+.portfolio-item{background:var(--paper); border:1px solid var(--ring); border-radius:12px; overflow:hidden; box-shadow:var(--shadow); display:flex; flex-direction:column;}
+.portfolio-item img{width:100%; height:120px; object-fit:cover;}
+.portfolio-meta{padding:6px 8px; font-size:0.85rem; color:var(--muted);}
+.delete-btn{align-self:flex-end; margin:4px; padding:2px 6px; font-weight:bold; cursor:pointer; border:none; border-radius:6px; background:#f4c1d5;}
+.bottom-nav{position:fixed; bottom:0; left:0; right:0; height:var(--nav-height); display:flex; justify-content:space-around; align-items:center; background:color-mix(in lab,var(--paper) 70%, white); border-top:1px solid var(--ring);}
+.nav-item{display:flex; flex-direction:column; align-items:center; text-decoration:none; color:var(--muted); font-size:11px;}
+.nav-item .material-icons{font-size:20px;}
+.nav-item.active{color:var(--accent);}
+</style>
 </head>
 <body>
+<div class="wrap">
+  <header class="card">
+    <h1>Outfit Board</h1>
+    <p>Upload your styled outfit.</p>
+  </header>
 
-<header>
-  <h1>Outfit Board</h1>
-  <nav style="background:#a64d79; padding:1rem; text-align:center;">
-  <a href="index.html" style="color:white; margin:0 1rem; font-weight:bold; text-decoration:none;">Home</a>
-  <a href="wardrobe.html" style="color:white; margin:0 1rem; font-weight:bold; text-decoration:none;">Closet</a>
-  <a href="planner.html" style="color:white; margin:0 1rem; font-weight:bold; text-decoration:none;">Planner</a>
-  <a href="wishlist.html" style="color: white; margin:0 1rem; font-weight: bold; text-decoration: none;">Wishlist</a>
-  <a href="portfolio.html" style="color: white; margin:0 1rem; font-weight: bold; text-decoration: none;">Portfolio</a>
-</nav>
-</header>
-
-<main>
-  <form id="uploadForm">
-    <label for="photoInput">Upload Outfit Photo(s):</label>
-    <input type="file" id="photoInput" accept="image/*" multiple required />
-
-    <label for="notesInput">Notes / Tags (e.g. date worn, occasion, mood):</label>
-    <textarea id="notesInput" rows="3" placeholder="Add notes or tags..."></textarea>
-
-    <button type="submit">Add to Board</button>
-  </form>
-
-  <section id="gallery" aria-live="polite" aria-label="Outfit photos gallery">
-    <!-- Photos will show here -->
+  <!-- Upload Form -->
+  <section class="card">
+    <h3>Add Outfit</h3>
+    <input type="file" id="photoInput" accept="image/*">
+    <input type="date" id="dateInput">
+    <input type="text" id="occasionInput" placeholder="Occasion">
+    <input type="text" id="moodInput" placeholder="Mood">
+    <button class="btn primary" id="addOutfitBtn">Add To Board</button>
   </section>
-</main>
 
-<!-- Edit modal -->
-<div id="editModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
-  <div class="modal-content">
-    <span class="closeBtn" id="editCloseBtn" role="button" aria-label="Close edit modal">&times;</span>
-    <h3 id="editModalTitle">Edit Notes</h3>
-    <form id="editForm">
-      <input type="hidden" id="editPhotoId" />
-      <label for="editNotesInput">Notes / Tags:</label>
-      <textarea id="editNotesInput" rows="4"></textarea>
-      <button type="submit">Save Changes</button>
-    </form>
-  </div>
+  <!-- Portfolio Display -->
+  <section class="card">
+    <h3>My Outfits</h3>
+    <div class="portfolio-grid" id="portfolioGrid">
+      <!-- JS will render portfolio items here -->
+    </div>
+  </section>
 </div>
 
-<script src="portfolio.js"></script>
+<!-- Bottom Nav -->
+<nav class="bottom-nav">
+  <a href="index.html" class="nav-item"><span class="material-icons">home</span><span>Home</span></a>
+  <a href="wardrobe.html" class="nav-item"><span class="material-icons">checkroom</span><span>Closet</span></a>
+  <a href="planner.html" class="nav-item"><span class="material-icons">event</span><span>Planner</span></a>
+  <a href="wishlist.html" class="nav-item"><span class="material-icons">favorite</span><span>Wishlist</span></a>
+  <a href="portfolio.html" class="nav-item active"><span class="material-icons">collections_bookmark</span><span>Portfolio</span></a>
+</nav>
 
+<script>
+// Local Storage Key
+const storageKey = 'portfolioOutfits';
+
+function loadOutfits() {
+  return JSON.parse(localStorage.getItem(storageKey)||'[]');
+}
+function saveOutfits(items) {
+  localStorage.setItem(storageKey, JSON.stringify(items));
+}
+
+// Render Portfolio
+function renderPortfolio() {
+  const grid = document.getElementById('portfolioGrid');
+  const items = loadOutfits();
+  grid.innerHTML='';
+  if(items.length===0){
+    grid.innerHTML='<p style="color:#6b2d5c;">No outfits added yet.</p>';
+    return;
+  }
+  items.forEach((item,index)=>{
+    const card = document.createElement('div');
+    card.className='portfolio-item';
+    const img = document.createElement('img');
+    img.src=item.photo;
+    img.alt='Outfit';
+    const meta = document.createElement('div');
+    meta.className='portfolio-meta';
+    meta.innerHTML=`<strong>Date:</strong> ${item.date || '-'}<br>
+                    <strong>Occasion:</strong> ${item.occasion || '-'}<br>
+                    <strong>Mood:</strong> ${item.mood || '-'}`;
+    const delBtn = document.createElement('button');
+    delBtn.className='delete-btn';
+    delBtn.textContent='×';
+    delBtn.addEventListener('click',()=>{
+      items.splice(index,1);
+      saveOutfits(items);
+      renderPortfolio();
+    });
+    card.appendChild(delBtn);
+    card.appendChild(img);
+    card.appendChild(meta);
+    grid.appendChild(card);
+  });
+}
+
+// Handle adding new outfit
+document.getElementById('addOutfitBtn').addEventListener('click',()=>{
+  const fileInput = document.getElementById('photoInput');
+  const date = document.getElementById('dateInput').value;
+  const occasion = document.getElementById('occasionInput').value.trim();
+  const mood = document.getElementById('moodInput').value.trim();
+
+  if(!fileInput.files.length) return alert('Please select a photo.');
+  const file = fileInput.files[0];
+  if(!file.type.startsWith('image/')) return alert('Select a valid image.');
+
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const items = loadOutfits();
+    items.push({
+      photo:e.target.result,
+      date,
+      occasion,
+      mood
+    });
+    saveOutfits(items);
+    fileInput.value='';
+    document.getElementById('dateInput').value='';
+    document.getElementById('occasionInput').value='';
+    document.getElementById('moodInput').value='';
+    renderPortfolio();
+  };
+  reader.readAsDataURL(file);
+});
+
+// Initial Render
+renderPortfolio();
+</script>
 </body>
 </html>

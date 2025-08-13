@@ -1,56 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Closet</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wardrobe</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
-  <!-- Header -->
-  <header>
-  <h1>My Color Themed Wardrobe</h1>
-  <nav>
-    <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="wardrobe.html">Closet</a></li>
-      <li><a href="planner.html">Planner</a></li>
-      <li><a href="wishlist.html"> Whishlist</a></li>
-      <li><a href="portfolio.html">Portfolio</a></li>
-    </ul>
-  </nav>
-  </header>
 
-  <!-- Main Content -->
-  <main>
-    <section id="intro">
-      <h2>Color Themed</h2>
-      <p>Plan your outfits for the week based on color themes and keep track of every look.</p>
-    </section>
+    <main class="content">
+        <h1>Welcome to My Wardrobe</h1>
+        <p>Your digital closet, beautifully organized.</p>
 
-    <section id="color-week">
-      <h2>This Week's Theme</h2>
-      <div class="color-display">
-        <div class="color-sample" id ="colorSample" style="background-color: pink;"></div>
-        <p id="themeName">Pink Week</p>
-      </div>
-    </section>
+        <!-- Weekly Theme Indicator -->
+        <section class="theme-indicator">
+            <div class="theme-circle"></div>
+            <p class="theme-text">This week is <span id="theme-name">Pink Week</span></p>
+        </section>
 
-    <section id="quick-actions">
-      <h2>Quick Actions</h2>
-      <button onclick="location.href='wardrobe.html'">Add New Clothing items</button>
-      <button onclick="location.href='planner.html'">Plan this week's outfits</button>
-    </section>
-  </main>
+        <!-- Outfit Highlights / Mood Board -->
+        <section class="mood-board">
+            <h2>Weekly Outfit Highlights</h2>
+            <div class="highlight-images">
+                <img src="images/outfit1.jpg" alt="Outfit 1">
+                <img src="images/outfit2.jpg" alt="Outfit 2">
+                <img src="images/outfit3.jpg" alt="Outfit 3">
+            </div>
+        </section>
 
-  <!-- footer -->
-  <footer>
-    <p>&copy. 2025 My Wardrobe Planner</p>
-  </footer>
+        <!-- Style Quote -->
+        <section class="style-quote">
+            <blockquote>"Style is a way to say who you are without speaking."</blockquote>
+        </section>
+    </main>
+
+    <!-- Floating Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item active">
+            <span class="material-icons">home</span>
+            <span class="label">Home</span>
+        </a>
+        <a href="wardrobe.html" class="nav-item">
+            <span class="material-icons">checkroom</span>
+            <span class="label">Closet</span>
+        </a>
+        <a href="planner.html" class="nav-item">
+            <span class="material-icons">calendar_month</span>
+            <span class="label">Planner</span>
+        </a>
+        <a href="wishlist.html" class="nav-item">
+            <span class="material-icons">favorite_border</span>
+            <span class="label">Wishlist</span>
+        </a>
+        <a href="portfolio.html" class="nav-item">
+            <span class="material-icons">collections_bookmark</span>
+            <span class="label">Portfolio</span>
+        </a>
+    </nav>
 
 
-  <script src="script.js"></script>
-
-
+    <script src="script.js"></script>
 </body>
 </html>

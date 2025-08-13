@@ -1,63 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Wishlist & Shopping Suggestions</title>
-<link rel="stylesheet" href="wishlist.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wishlist</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fff7f9; --paper:#fff; --ink:#4b2c36; --muted:#8f5a7e; --accent:#a64d79; --ring:#f0c6d3; --shadow:0 4px 16px rgba(0,0,0,.08); --nav-height:64px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; font-family:system-ui,sans-serif; background:var(--bg); color:var(--ink); display:flex; flex-direction:column; min-height:100vh;}
+  .wrap{padding:18px 14px calc(var(--nav-height)+18px); max-width:600px; width:100%; margin:0 auto; flex:1;}
+  h1,h2,h3{margin:0 0 8px;}
+  .card{background:var(--paper); border:1px solid var(--ring); border-radius:14px; padding:12px; margin-bottom:12px; box-shadow:var(--shadow);}
+  .wishlist-list{list-style:none; padding:0; margin:0;}
+  .wishlist-list li{padding:8px 10px; border-bottom:1px solid var(--ring); display:flex; justify-content:space-between; align-items:center;}
+  .wishlist-list li:last-child{border-bottom:none;}
+  .btn{cursor:pointer; border-radius:10px; border:1px solid var(--ring); padding:6px 12px; font-weight:700; background:var(--paper);}
+  .btn.primary{background:var(--accent); color:#fff; border-color:transparent;}
+  .suggestions{display:flex; flex-wrap:wrap; gap:8px; margin-top:6px;}
+  .suggestion-item{background:var(--chip); padding:6px 10px; border-radius:10px; cursor:pointer;}
+  .bottom-nav{position:fixed; bottom:0; left:0; right:0; height:var(--nav-height); display:flex; justify-content:space-around; align-items:center; background:color-mix(in lab,var(--paper) 70%, white); border-top:1px solid var(--ring);}
+  .nav-item{display:flex; flex-direction:column; align-items:center; text-decoration:none; color:var(--muted); font-size:11px;}
+  .nav-item .material-icons{font-size:20px;}
+  .nav-item.active{color:var(--accent);}
+</style>
 </head>
 <body>
+<div class="wrap">
+  <header class="card">
+    <h1>My Wishlist</h1>
+    <p>Add items you want to get, and see suggestions from your closet.</p>
+  </header>
 
-<h1>Wishlist & Shopping Suggestions</h1>
-<nav style="background:#a64d79; padding:1rem; text-align:center;">
-  <a href="index.html" style="color:white; margin:0 1rem; font-weight:bold; text-decoration:none;">Home</a>
-  <a href="wardrobe.html" style="color:white; margin:0 1rem; font-weight:bold; text-decoration:none;">Closet</a>
-  <a href="planner.html" style="color:white; margin:0 1rem; font-weight:bold; text-decoration:none;">Planner</a>
-  <a href="wishhlist.html"style="color: white; margin:0 1rem; font-weight: bold; text-decoration: none;">Wishlist</a>
-  <a href="portfolio.html" style="color: white; margin:0 1rem; font-weight: bold; text-decoration: none;">Portfolio</a>
+  <!-- Add Item Form -->
+  <section class="card">
+    <h3>Add Wishlist Item</h3>
+    <input type="text" id="wishlistInput" placeholder="What do you want?" style="width:100%; padding:8px; margin-bottom:6px; border-radius:10px; border:1px solid var(--ring);">
+    <button class="btn primary" id="addWishlistBtn">Add to Wishlist</button>
+  </section>
+
+  <!-- Suggestions -->
+  <section class="card">
+    <h3>Suggested Outfits</h3>
+    <div class="suggestions" id="suggestionsContainer">
+      <!-- JS will populate suggestions -->
+    </div>
+  </section>
+
+  <!-- Wishlist Display -->
+  <section class="card">
+    <h3>Your Wishlist</h3>
+    <ul class="wishlist-list" id="wishlistList">
+      <!-- JS will populate wishlist items -->
+    </ul>
+    <button class="btn primary" id="downloadWishlist">Download as PDF</button>
+  </section>
+</div>
+
+<!-- Bottom Nav -->
+<nav class="bottom-nav">
+  <a href="index.html" class="nav-item"><span class="material-icons">home</span><span>Home</span></a>
+  <a href="wardrobe.html" class="nav-item"><span class="material-icons">checkroom</span><span>Closet</span></a>
+  <a href="planner.html" class="nav-item"><span class="material-icons">event</span><span>Planner</span></a>
+  <a href="wishlist.html" class="nav-item active"><span class="material-icons">favorite</span><span>Wishlist</span></a>
+  <a href="portfolio.html" class="nav-item"><span class="material-icons">collections_bookmark</span><span>Portfolio</span></a>
 </nav>
 
-<section id="wishlistSection">
-  <h2>Add to Wishlist</h2>
-  <form id="wishlistForm">
-    <label>
-      Item Name:
-      <input type="text" id="wishName" required />
-    </label>
-    <label>
-      Category:
-      <select id="wishCategory" required>
-        <option value="">Select category</option>
-        <option>Tops</option>
-        <option>Bottoms</option>
-        <option>Dresses</option>
-        <option>Accessories</option>
-        <option>Shoes</option>
-        <option>Innerwear</option>
-        <option>Jackets</option>
-      </select>
-    </label>
-    <label>
-      Preferred Color:
-      <input type="color" id="wishColor" value="#ff0000" />
-    </label>
-    <label>
-      Notes:
-      <textarea id="wishNotes" rows="2" placeholder="Additional details..."></textarea>
-    </label>
-    <button type="submit">Add to Wishlist</button>
-  </form>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+const wishlistInput = document.getElementById('wishlistInput');
+const addBtn = document.getElementById('addWishlistBtn');
+const wishlistList = document.getElementById('wishlistList');
+const downloadBtn = document.getElementById('downloadWishlist');
+const suggestionsContainer = document.getElementById('suggestionsContainer');
 
-  <h2>Your Wishlist</h2>
-  <ul id="wishlistItems"></ul>
-</section>
+function loadWishlist(){ 
+  return JSON.parse(localStorage.getItem('wishlist')||'[]'); 
+}
+function saveWishlist(items){ 
+  localStorage.setItem('wishlist', JSON.stringify(items)); 
+}
+function renderWishlist(){
+  const items = loadWishlist();
+  wishlistList.innerHTML='';
+  if(items.length===0) wishlistList.innerHTML='<li>No items yet</li>';
+  items.forEach((item,index)=>{
+    const li=document.createElement('li');
+    li.textContent=item;
+    const delBtn=document.createElement('button');
+    delBtn.textContent='×';
+    delBtn.className='btn';
+    delBtn.addEventListener('click',()=>{
+      items.splice(index,1);
+      saveWishlist(items);
+      renderWishlist();
+    });
+    li.appendChild(delBtn);
+    wishlistList.appendChild(li);
+  });
+}
 
-<section id="suggestions">
-  <h2>Shopping Suggestions</h2>
-  <div id="suggestionsList">Loading suggestions...</div>
-</section>
+// Add new wishlist item
+addBtn.addEventListener('click',()=>{
+  const val=wishlistInput.value.trim();
+  if(!val) return alert('Type something first');
+  const items=loadWishlist();
+  items.push(val);
+  saveWishlist(items);
+  wishlistInput.value='';
+  renderWishlist();
+});
 
-<script src="wishlist.js"></script>
+// Suggestions from closet
+function renderSuggestions(){
+  const closetImages = JSON.parse(localStorage.getItem('closetImages')||'[]');
+  suggestionsContainer.innerHTML='';
+  if(closetImages.length===0){
+    suggestionsContainer.innerHTML='<p style="color:#6b2d5c">No items in your closet yet.</p>';
+    return;
+  }
+  // Example: show top 5 items by favorite or recently worn
+  const suggested = closetImages.sort((a,b)=>{
+    if(a.isFavorite && !b.isFavorite) return -1;
+    if(!a.isFavorite && b.isFavorite) return 1;
+    return 0;
+  }).slice(0,5);
+  suggested.forEach(img=>{
+    const div=document.createElement('div');
+    div.className='suggestion-item';
+    div.textContent=img.category;
+    div.addEventListener('click',()=>{
+      const items=loadWishlist();
+      if(!items.includes(img.category)){
+        items.push(img.category);
+        saveWishlist(items);
+        renderWishlist();
+      }
+    });
+    suggestionsContainer.appendChild(div);
+  });
+}
 
+// Download wishlist as PDF
+downloadBtn.addEventListener('click',()=>{
+  const items = loadWishlist();
+  if(items.length===0){alert('No items to download'); return;}
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.setFontSize(14);
+  doc.text('My Wishlist', 10, 15);
+  items.forEach((item,i)=>{
+    doc.text(`${i+1}. ${item}`, 10, 25 + i*10);
+  });
+  doc.save('wishlist.pdf');
+});
+
+renderWishlist();
+renderSuggestions();
+</script>
 </body>
 </html>
