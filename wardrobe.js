@@ -31,6 +31,8 @@ const colorOptions = document.querySelectorAll('.color-option');
 
 let selectedCategory = "tops";
 let selectedColors = new Set();
+let plannerMode = false; // true when opened from planner
+let selectedOutfitsForPlanner = [];
 
 // Handle color selection UI
 colorOptions.forEach(btn => {
@@ -71,7 +73,7 @@ function renderImages() {
   filtered.forEach(img => {
     const item = document.createElement("div");
     item.classList.add("closet-item");
-    item.style.position = 'relative'; // Ensure badges position correctly
+    item.style.position = 'relative';
 
     // Image element
     const imageEl = document.createElement("img");
@@ -83,7 +85,6 @@ function renderImages() {
     deleteBtn.classList.add("delete-btn");
     deleteBtn.textContent = "×";
     deleteBtn.title = "Delete this item";
-
     deleteBtn.addEventListener("click", () => {
       if (confirm("Delete this item?")) {
         const updatedImages = loadImages().filter(i => i.id !== img.id);
@@ -106,7 +107,6 @@ function renderImages() {
     favBtn.classList.add('favorite-btn');
     favBtn.innerHTML = img.isFavorite ? '★' : '☆';
     favBtn.title = img.isFavorite ? 'Unmark Favorite' : 'Mark as Favorite';
-
     favBtn.addEventListener('click', () => {
       const images = loadImages();
       const target = images.find(i => i.id === img.id);
@@ -117,7 +117,6 @@ function renderImages() {
       }
     });
 
-    // Append elements to item container
     item.appendChild(imageEl);
     item.appendChild(deleteBtn);
     item.appendChild(colorContainer);
@@ -134,7 +133,6 @@ function renderImages() {
         newBadge.textContent = 'New';
         item.appendChild(newBadge);
       } else {
-        // If more than 7 days, remove isNew flag automatically
         const images = loadImages();
         const target = images.find(i => i.id === img.id);
         if (target) {
@@ -156,6 +154,24 @@ function renderImages() {
       }
     }
 
+    // Planner selection
+    if (plannerMode) {
+      item.classList.add('planner-selectable');
+      if (selectedOutfitsForPlanner.find(o => o.id === img.id)) {
+        item.classList.add('selected-for-planner');
+      }
+      item.addEventListener('click', () => {
+        const index = selectedOutfitsForPlanner.findIndex(o => o.id === img.id);
+        if (index > -1) {
+          selectedOutfitsForPlanner.splice(index, 1);
+          item.classList.remove('selected-for-planner');
+        } else {
+          selectedOutfitsForPlanner.push(img);
+          item.classList.add('selected-for-planner');
+        }
+      });
+    }
+
     closetGrid.appendChild(item);
   });
 }
@@ -175,21 +191,11 @@ categoryButtons.forEach(btn => {
 });
 
 uploadBtn.addEventListener("click", () => {
-  if (!uploadInput.files.length) {
-    alert("Please select an image to upload.");
-    return;
-  }
-
-  if (selectedColors.size === 0) {
-    alert("Please select at least one color.");
-    return;
-  }
+  if (!uploadInput.files.length) { alert("Please select an image to upload."); return; }
+  if (selectedColors.size === 0) { alert("Please select at least one color."); return; }
 
   const file = uploadInput.files[0];
-  if (!file.type.startsWith("image/")) {
-    alert("Please upload a valid image file.");
-    return;
-  }
+  if (!file.type.startsWith("image/")) { alert("Please upload a valid image file."); return; }
 
   const reader = new FileReader();
   reader.onload = function (e) {
