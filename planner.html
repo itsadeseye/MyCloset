@@ -259,76 +259,7 @@
       <span class="label">Portfolio</span>
     </a>
   </nav>
-  // ====== PLANNER.JS ======
 
-// Store outfits for each date
-let outfitPlans = {};
-
-// When a date is clicked
-function selectDate(date) {
-    const selectedDate = document.getElementById("selected-date");
-    selectedDate.textContent = date;
-
-    const outfitList = document.getElementById("outfit-list");
-    outfitList.innerHTML = "";
-
-    if (outfitPlans[date]) {
-        outfitPlans[date].forEach(outfit => {
-            const img = document.createElement("img");
-            img.src = outfit;
-            img.classList.add("calendar-thumbnail");
-            outfitList.appendChild(img);
-        });
-    }
-}
-
-// Open Closet and pass selected date
-function planOutfitForDate(date) {
-    localStorage.setItem("plannerSelectedDate", date);
-    window.location.href = "closet.html"; // Go to closet
-}
-
-// When Closet loads for Planner mode
-function handleClosetSelection() {
-    const date = localStorage.getItem("plannerSelectedDate");
-    if (!date) return;
-
-    const selectBtn = document.getElementById("select-outfits-btn");
-    if (selectBtn) {
-        selectBtn.style.display = "block"; // Show button in planner mode
-        selectBtn.addEventListener("click", () => {
-            const selectedOutfits = Array.from(document.querySelectorAll(".closet-item.selected"))
-                .map(item => item.querySelector("img").src);
-
-            if (!outfitPlans[date]) {
-                outfitPlans[date] = [];
-            }
-            outfitPlans[date] = outfitPlans[date].concat(selectedOutfits);
-
-            localStorage.setItem("outfitPlans", JSON.stringify(outfitPlans));
-            localStorage.removeItem("plannerSelectedDate");
-            window.location.href = "planner.html"; // Go back to planner
-        });
-    }
-}
-
-// Load outfits from localStorage
-function loadOutfitPlans() {
-    const savedPlans = localStorage.getItem("outfitPlans");
-    if (savedPlans) {
-        outfitPlans = JSON.parse(savedPlans);
-    }
-}
-
-// ====== INIT ======
-document.addEventListener("DOMContentLoaded", () => {
-    loadOutfitPlans();
-
-    // If we're in Closet page
-    if (window.location.pathname.includes("closet.html")) {
-        handleClosetSelection();
-    }
-});
   <script src="planner.js"></script>
 </body>
 </html>
