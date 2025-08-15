@@ -1,224 +1,240 @@
-// Weekly themes
-const themes = [
-  { name: "pink-week", bgClass: "pink-week" },
-  { name: "blue-week", bgClass: "blue-week" },
-  { name: "brown-week", bgClass: "brown-week" },
-  { name: "white-week", bgClass: "white-week" },
-  { name: "riot-week", bgClass: "riot-week" }
-];
+// -------- Planner Linkage (URL params) --------
+const url = new URL(location.href);
+const plannerMode = url.searchParams.get('from') === 'planner';
+const plannerDate = url.searchParams.get('date') || null; // "YYYY-MM-DD"
 
-// Get current week number (1-53)
-function getWeekNumber(date) {
-  const startOfYear = new Date(date.getFullYear(), 0, 1);
-  const pastDays = Math.floor((date - startOfYear) / 86400000);
-  return Math.ceil((pastDays + startOfYear.getDay() + 1) / 7);
-}
-
-function setWeeklyTheme() {
-  const currentWeek = getWeekNumber(new Date());
-  const themeIndex = currentWeek % themes.length;
-  document.body.classList.add(themes[themeIndex].bgClass);
-}
-
-setWeeklyTheme();
-
-// App State & Elements
-const categoryButtons = document.querySelectorAll(".category-btn");
-const closetGrid = document.getElementById("closetGrid");
-const uploadInput = document.getElementById("uploadInput");
-const uploadBtn = document.getElementById("uploadBtn");
-const colorOptions = document.querySelectorAll('.color-option');
-
-let selectedCategory = "tops";
+// -------- Elements & State --------
+let selectedCategory = 'tops';
 let selectedColors = new Set();
-let plannerMode = false; // true when opened from planner
-let selectedOutfitsForPlanner = [];
 
-// Handle color selection UI
-colorOptions.forEach(btn => {
-  btn.addEventListener('click', () => {
+const categoryButtons = document.querySelectorAll(".category-btn");
+const colorOptions = document.querySelectorAll(".color-option");
+const closetGrid = document.getElementById("closetGrid");
+const uploadBtn = document.getElementById("uploadBtn");
+const uploadInput = document.getElementById("uploadInput");
+
+// Selection bar injected in plannerMode
+let selectionBar;
+let selectedIds = new Set(); // selected item IDs when plannerMode
+
+// -------- Storage helpers --------
+const CLOSET_KEY = "closetImages";
+const PLANS_KEY  = "outfitPlans";
+
+function loadImages(){
+  const data = localStorage.getItem(CLOSET_KEY);
+  return data ? JSON.parse(data) : [];
+}
+function saveImages(images){
+  localStorage.setItem(CLOSET_KEY, JSON.stringify(images));
+}
+function loadPlans(){
+  return JSON.parse(localStorage.getItem(PLANS_KEY) || "{}");
+}
+function savePlans(plans){
+  localStorage.setItem(PLANS_KEY, JSON.stringify(plans));
+}
+
+// -------- UI: category & colors --------
+categoryButtons.forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    selectedCategory = btn.dataset.category;
+    categoryButtons.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderImages();
+  });
+});
+
+colorOptions.forEach(btn=>{
+  btn.addEventListener('click',()=>{
     const color = btn.dataset.color;
-    if (selectedColors.has(color)) {
+    if(selectedColors.has(color)){
       selectedColors.delete(color);
       btn.classList.remove('selected');
-    } else {
+    } else{
       selectedColors.add(color);
       btn.classList.add('selected');
     }
   });
 });
 
-function loadImages() {
-  const data = localStorage.getItem("closetImages");
-  return data ? JSON.parse(data) : [];
-}
-
-function saveImages(images) {
-  localStorage.setItem("closetImages", JSON.stringify(images));
-}
-
-function renderImages() {
+// -------- Render Closet Grid --------
+function renderImages(){
   const images = loadImages();
-  closetGrid.innerHTML = "";
+  closetGrid.innerHTML = '';
+  const filtered = images.filter(img=>img.category===selectedCategory);
 
-  const filtered = images.filter(img => img.category === selectedCategory);
-
-  if (filtered.length === 0) {
-    closetGrid.innerHTML = `<p style="text-align:center; color:#6b2d5c; margin-top: 2rem;">
+  if(filtered.length===0){
+    closetGrid.innerHTML = `<p style="text-align:center;color:#6b2d5c;margin-top:2rem;">
       No items in "${selectedCategory}" category yet.
     </p>`;
     return;
   }
 
-  filtered.forEach(img => {
-    const item = document.createElement("div");
-    item.classList.add("closet-item");
+  filtered.forEach(img=>{
+    const item = document.createElement('div');
+    item.className='closet-item';
     item.style.position = 'relative';
 
-    // Image element
-    const imageEl = document.createElement("img");
+    const imageEl = document.createElement('img');
     imageEl.src = img.src;
     imageEl.alt = img.category;
 
-    // Delete button
-    const deleteBtn = document.createElement("button");
-    deleteBtn.classList.add("delete-btn");
-    deleteBtn.textContent = "×";
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className='delete-btn';
+    deleteBtn.textContent='×';
     deleteBtn.title = "Delete this item";
-    deleteBtn.addEventListener("click", () => {
-      if (confirm("Delete this item?")) {
-        const updatedImages = loadImages().filter(i => i.id !== img.id);
-        saveImages(updatedImages);
+    deleteBtn.addEventListener('click',(e)=>{
+      e.stopPropagation();
+      if(confirm("Delete this item?")){
+        const updated = loadImages().filter(i=>i.id!==img.id);
+        saveImages(updated);
         renderImages();
       }
     });
 
-    // Color swatches container
-    const colorContainer = document.createElement('div');
-    colorContainer.classList.add('color-swatch-container');
-    img.colors.forEach(color => {
-      const swatch = document.createElement('div');
-      swatch.classList.add('color-swatch', color);
-      colorContainer.appendChild(swatch);
-    });
+    // Badge showing colors
+    const badge = document.createElement('span');
+    badge.className='badge';
+    badge.textContent = (img.colors && img.colors.length ? img.colors.join(', ') : '—');
 
-    // Favorite toggle button
-    const favBtn = document.createElement('button');
-    favBtn.classList.add('favorite-btn');
-    favBtn.innerHTML = img.isFavorite ? '★' : '☆';
-    favBtn.title = img.isFavorite ? 'Unmark Favorite' : 'Mark as Favorite';
-    favBtn.addEventListener('click', () => {
-      const images = loadImages();
-      const target = images.find(i => i.id === img.id);
-      if (target) {
-        target.isFavorite = !target.isFavorite;
-        saveImages(images);
-        renderImages();
-      }
-    });
+    // Planner multi-select mode
+    if (plannerMode) {
+      item.style.cursor = 'pointer';
+      // Selected visual
+      if (selectedIds.has(String(img.id))) item.style.outline = '3px solid #a64d79';
+
+      item.addEventListener('click', ()=>{
+        const idStr = String(img.id);
+        if (selectedIds.has(idStr)) {
+          selectedIds.delete(idStr);
+          item.style.outline = '';
+        } else {
+          selectedIds.add(idStr);
+          item.style.outline = '3px solid #a64d79';
+        }
+        updateSelectionBar();
+      });
+    }
+
+    const meta = document.createElement('div');
+    meta.className='meta';
+    meta.innerHTML=`Category: ${img.category}`;
 
     item.appendChild(imageEl);
     item.appendChild(deleteBtn);
-    item.appendChild(colorContainer);
-    item.appendChild(favBtn);
-
-    // New badge
-    const now = new Date();
-    if (img.isNew && img.addedDate) {
-      const addedDate = new Date(img.addedDate);
-      const diffDays = Math.floor((now - addedDate) / (1000 * 60 * 60 * 24));
-      if (diffDays <= 7) {
-        const newBadge = document.createElement('span');
-        newBadge.classList.add('badge', 'new-badge');
-        newBadge.textContent = 'New';
-        item.appendChild(newBadge);
-      } else {
-        const images = loadImages();
-        const target = images.find(i => i.id === img.id);
-        if (target) {
-          target.isNew = false;
-          saveImages(images);
-        }
-      }
-    }
-
-    // Recently worn badge
-    if (img.lastWorn) {
-      const lastWornDate = new Date(img.lastWorn);
-      const daysSinceWorn = Math.floor((now - lastWornDate) / (1000 * 60 * 60 * 24));
-      if (daysSinceWorn <= 14) {
-        const wornBadge = document.createElement('span');
-        wornBadge.classList.add('badge', 'worn-badge');
-        wornBadge.textContent = 'Recently Worn';
-        item.appendChild(wornBadge);
-      }
-    }
-
-    // Planner selection
-    if (plannerMode) {
-      item.classList.add('planner-selectable');
-      if (selectedOutfitsForPlanner.find(o => o.id === img.id)) {
-        item.classList.add('selected-for-planner');
-      }
-      item.addEventListener('click', () => {
-        const index = selectedOutfitsForPlanner.findIndex(o => o.id === img.id);
-        if (index > -1) {
-          selectedOutfitsForPlanner.splice(index, 1);
-          item.classList.remove('selected-for-planner');
-        } else {
-          selectedOutfitsForPlanner.push(img);
-          item.classList.add('selected-for-planner');
-        }
-      });
-    }
+    item.appendChild(badge);
+    item.appendChild(meta);
 
     closetGrid.appendChild(item);
   });
 }
 
-function updateActiveCategoryBtn() {
-  categoryButtons.forEach(btn => {
-    btn.classList.toggle("active", btn.dataset.category === selectedCategory);
-  });
-}
-
-categoryButtons.forEach(btn => {
-  btn.addEventListener("click", () => {
-    selectedCategory = btn.dataset.category;
-    updateActiveCategoryBtn();
-    renderImages();
-  });
-});
-
-uploadBtn.addEventListener("click", () => {
-  if (!uploadInput.files.length) { alert("Please select an image to upload."); return; }
-  if (selectedColors.size === 0) { alert("Please select at least one color."); return; }
+// -------- Upload (with 5MB limit) --------
+uploadBtn.addEventListener('click',()=>{
+  if(!uploadInput.files.length){
+    alert("Select an image first");
+    return;
+  }
+  if(selectedColors.size===0){
+    alert("Select at least one color");
+    return;
+  }
 
   const file = uploadInput.files[0];
-  if (!file.type.startsWith("image/")) { alert("Please upload a valid image file."); return; }
+
+  // 5MB max size
+  const MAX_MB = 5;
+  if (file.size > MAX_MB * 1024 * 1024) {
+    alert(`Image too large (${(file.size/1024/1024).toFixed(1)}MB). Please choose an image ≤ ${MAX_MB}MB.`);
+    return;
+  }
+
+  if(!file.type.startsWith('image/')){
+    alert("Please select a valid image file");
+    return;
+  }
 
   const reader = new FileReader();
-  reader.onload = function (e) {
+  reader.onload = e=>{
     const images = loadImages();
     images.push({
       id: Date.now(),
       category: selectedCategory,
-      src: e.target.result,
       colors: Array.from(selectedColors),
-      isFavorite: false,
-      lastWorn: null,
-      isNew: true,
-      addedDate: new Date().toISOString()
+      src: e.target.result
     });
     saveImages(images);
     selectedColors.clear();
-    colorOptions.forEach(btn => btn.classList.remove('selected'));
+    colorOptions.forEach(btn=>btn.classList.remove('selected'));
+    uploadInput.value='';
     renderImages();
-    uploadInput.value = "";
   };
   reader.readAsDataURL(file);
 });
 
-// Initial render
-updateActiveCategoryBtn();
+// -------- Planner selection bar (only in plannerMode) --------
+function ensureSelectionBar(){
+  if (!plannerMode || selectionBar) return;
+  selectionBar = document.createElement('div');
+  selectionBar.style.position = 'fixed';
+  selectionBar.style.left = '0';
+  selectionBar.style.right = '0';
+  selectionBar.style.bottom = '64px'; // just above bottom nav
+  selectionBar.style.zIndex = '70';
+  selectionBar.style.display = 'flex';
+  selectionBar.style.justifyContent = 'space-between';
+  selectionBar.style.alignItems = 'center';
+  selectionBar.style.padding = '10px 12px';
+  selectionBar.style.background = 'rgba(255, 214, 232, .95)';
+  selectionBar.style.borderTop = '1px solid #f0c6d3';
+  selectionBar.style.backdropFilter = 'blur(6px)';
+  selectionBar.innerHTML = `
+    <div id="selCount" style="color:#6b2d5c;font-weight:700">0 selected</div>
+    <div style="display:flex;gap:8px">
+      <button id="cancelSel" style="padding:8px 12px;border-radius:8px;border:1px solid #f0c6d3;background:#fff;color:#6b2d5c;cursor:pointer">Cancel</button>
+      <button id="confirmSel" style="padding:8px 12px;border-radius:8px;border:none;background:#a64d79;color:#fff;font-weight:700;cursor:pointer">Add to Planner</button>
+    </div>
+  `;
+  document.body.appendChild(selectionBar);
+
+  document.getElementById('cancelSel').addEventListener('click', ()=>{
+    // Go back to planner without saving
+    const back = url.searchParams.get('back') || 'planner.html';
+    location.href = `${back}?date=${encodeURIComponent(plannerDate || '')}`;
+  });
+  document.getElementById('confirmSel').addEventListener('click', ()=>{
+    if (!plannerDate) {
+      alert('Missing planner date. Reopen the Closet from Planner.');
+      return;
+    }
+    const plans = loadPlans();
+    const ids = Array.from(selectedIds);
+    const existing = plans[plannerDate] || { items: [] };
+
+    // Merge unique (keep both)
+    const merged = Array.from(new Set([...(existing.items||[]), ...ids]));
+    plans[plannerDate] = {
+      ...(plans[plannerDate] || {}),
+      items: merged,
+      updatedAt: new Date().toISOString()
+    };
+    savePlans(plans);
+
+    const back = url.searchParams.get('back') || 'planner.html';
+    location.href = `${back}?date=${encodeURIComponent(plannerDate)}`;
+  });
+}
+
+function updateSelectionBar(){
+  if (!plannerMode || !selectionBar) return;
+  const selCount = document.getElementById('selCount');
+  selCount.textContent = `${selectedIds.size} selected`;
+}
+
+// -------- Init --------
+if (plannerMode) {
+  ensureSelectionBar();
+}
+
 renderImages();
